@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TextBox1.Text" xml:space="preserve">
+    <value>Name	Formal Name	Capital	Currency	Currency Code	Currency Number	2Letter	3Letters	UN Code	BelongsTo	Cities
+Canada	Republic of Albania	Tirana	Lek	ALL	8	AL	ALB	8	North America | Americas	Ottawa | Edmonton | Victoria | Winnipeg | Fredericton | St. John's | Halifax | Toronto | Charlottetown | Quebec City | Regina | Yellowknife | Iqaluit | Whitehorse
+China	People's Democratic Republic of Algeria	Algiers	Algerian Dinar	DZD	12	DZ	DZA	12	Eastern Asia | Asia	Shanghai | Beijing | Chongqing | Tianjin | Guangzhou | Shenzhen | Chengdu | Nanjing | Wuhan | Xi'an | Hangzhou | Dongguan | Foshan | Shenyang | Harbin | Qingdao | Dalian | Jinan
+Croatia	Principality of Andorra	Andorra la Vella	Euro	EUR	978	AD	AND	20	Southern Europe | Europe | Mediterranean Basin	Zagreb | Split | Rijeka | Osijek | Zadar | Velika Gorica | Slavonski Brod | Pula | Karlovac | Sisak | Varaždin | Šibenik | Dubrovnik | Bjelovar
+Czechia	Republic of Angola	Luanda	Kwanza	AOA	973	AO	AGO	24	Europe | Eastern Europe	Prague | Brno | Ostrava | Plzeň | Liberec | Olomouc | České Budějovice | Hradec Králové | Ústí nad Labem | Pardubice | Zlín | Havířov | Kladno | Most
+Denmark	Antigua and Barbuda	Saint John's	East Caribbean Dollar	XCD	951	AG	ATG	28	Northern Europe | Europe | Scandinavia | Nordic	Copenhagen | Aarhus | Odense | Aalborg | Esbjerg | Randers | Kolding | Horsens | Vejle | Roskilde | Herning | Hørsholm | Helsingør | Silkeborg | Næstved
+Egypt	Argentine Republic	Buenos Aires	Argentine Peso	ARS	32	AR	ARG	32	Northern Africa | Africa | Neil Basin | Mediterranean Basin	Cairo | Alexandria | Giza | Shubra El Kheima | Port Said | Suez | El Mahalla El Kubra | Luxor | Mansoura | Tanta | Asyut
+Finland	Republic of Armenia	Yerevan	Armenian Dram	AMD	51	AM	ARM	51	Northern Europe | Europe | Nordic	Helsinki | Espoo | Tampere | Vantaa | Oulu | Turku | Jyväskylä | Lahti | Kuopio[d] | Pori | Kouvola[c] | Joensuu | Lappeenranta[e] | Hämeenlinna
+France	Aruba (Dutch crown dependency)	Oranjestad	Aruban Florin	AWG	533	AW	ABW	533	Western Europe |  Europe	Paris | Marseille | Lyon | Toulouse | Nice | Nantes | Montpellier | Strasbourg | Bordeaux | Lille
+Georgia	Commonwealth of Australia	Canberra	Australian Dollar	AUD	36	AU	AUS	36	Caucasus | Asia | Post USSR	Tbilisi | Batumi | Kutaisi | Rustavi | Gori | Zugdidi | Poti | Kobuleti | Khashuri | Samtredia
+Germany	Republic of Austria	Vienna	Euro	EUR	978	AT	AUT	40	Western Europe |  Europe	 Berlin | Hamburg | Munich (München) | Cologne (Köln) | Frankfurt am Main | Stuttgart | Düsseldorf | Dortmund | Essen | Leipzig
+Greece	Republic of Azerbaijan	Baku	Azerbaijanian Manat	AZN	944	AZ	AZE	31	Southern Europe | Europe | Mediterranean Basin	Athens | Thessaloniki  | Patras  | Piraeus  | Larissa | Heraklion | Peristeri  | Kallithea  | Acharnes  | Kalamaria  | Nikaia  | Glyfada  | Volos | Ilio 
+Hungary	Commonwealth of The Bahamas	Nassau				BS	BHS	44	Eastern Europe | Europe	Budapest | Debrecen | Szeged | Miskolc | Pécs | Győr | Nyíregyháza | Kecskemét
+Iceland	Kingdom of Bahrain	Manama	Bahraini Dinar	BHD	48	BH	BHR	48	Northern Europe | Europe | Nordic	Reykjavík | Kópavogur | Hafnarfjörður | Akureyri | Reykjanesbær | Garðabær | Mosfellsbær | Selfoss | Akranes | Seltjarnarnes
+India	People's Republic of Bangladesh	Dhaka	Taka	BDT	50	BD	BGD	50	Southern Asia | Asia	Mumbai | Delhi | Bangalore | Hyderabad | Ahmedabad | Chennai | Kolkata | Surat | Pune | Jaipur | Lucknow
+Indonesia	Barbados	Bridgetown	Barbados Dollar	BBD	52	BB	BRB	52	South-eastern Asia | Asia	East Jakarta | Surabaya | Bekasi | Bandung | Medan | West Jakarta | South Jakarta | Depok
+Iran	Republic of Belarus	Minsk	Belarussian Ruble	BYN	933	BY	BLR	112	Southern Asia	Tehran | Mashhad | Isfahan | Karaj | Shiraz | Tabriz | Qom | Ahvaz | Kermanshah | Urmia | Rasht | Zahedan
+Iraq	Kingdom of Belgium	Brussels	Euro	EUR	978	BE	BEL	56	Southern Asia	Baghdad | Basra | Kirkuk | Najaf | Sulaymaniyah | Al Hillah | Amarah | Nasiriyah | Karbala | Kut | Al Diwaniyah | Ramadi | Fallujah
+Ireland	Belize	Belmopan	Belize Dollar	BZD	84	BZ	BLZ	84	Northern Europe | Europe	Dublin | Belfast | Cork | Derry | Limerick | Galway | Craigavon | Waterford | Drogheda | Dundalk
+Italy	Belize	Porto-Novo	CFA Franc BCEAO	XOF	952	BJ	BEN	204	Southern Europe | Europe | Mediterranean Basin	Rome | Milan | Naples | Turin | Palermo | Genoa | Bologna | Florence | Bari | Catania
+Japan	Kingdom of Bhutan	Thimphu	Ngultrum	BTN	64	BT	BTN	64	Eastern Asia | Asia	 Tokyo |  Kanagawa |  Osaka |  Aichi |  Hokkaidō |  Fukuoka |  Kanagawa |  Hyōgo |  Kyoto |  Saitama |  Hiroshima |  Miyagi |  Chiba |  Fukuoka
+Kazakhstan	Plurinational State of Bolivia	Sucre (de jure),				BO	BOL	68	Central Asia | Asia	Almaty | Shymkent | Karagandy | Taraz | Nur-Sultan | Pavlodar | Oskemen | Semey
+South Korea	Bosnia and Herzegovina	Sarajevo	Convertible Mark	BAM	977	BA	BIH	70	South-eastern Asia | Asia	Seoul | Busan | Incheon | Daegu | Daejeon | Gwangju | Suwon | Ulsan
+Morocco	Republic of Botswana	Gaborone	Pula	BWP	72	BW	BWA	72	Northern Africa | Africa | Mediterranean Basin	Casablanca | Fez | Tangier | Marrakesh | Salé | Meknes | Rabat | Oujda | Kenitra | Agadir
+Netherlands	Federative Republic of Brazil	Brasilia	Brazilian Real	BRL	986	BR	BRA	76	Western Europe |  Europe	Amsterdam | Rotterdam | The Hague | Utrecht | Eindhoven | Tilburg | Groningen | Almere | Breda | Nijmegen
+Norway	State of Brunei Darussalam	Bandar Seri Begawan							Northern Europe | Europe | Scandinavia | Nordic	Oslo | Bergen | Trondheim | Stavanger | Kristiansand | Fredrikstad | Sandnes | Tromsø | Skien | Drammen
+Poland	Republic of Bulgaria	Sofia	Bulgarian Lev	BGN	975	BG	BGR	100	Eastern Europe | Europe	Warsaw | Kraków | Łódź | Wrocław | Poznań | Gdańsk | Szczecin | Bydgoszcz | Lublin | Białystok | Katowice | Gdynia | Częstochowa | Radom | Toruń
+Romania	Burkina Faso	Ouagadougou	CFA Franc BCEAO	XOF	952	BF	BFA	854	Eastern Europe | Europe	Bucharest | Iași | Cluj-Napoca | Timișoara | Constanța | Craiova | Galați
+Russia	Republic of Burundi	Gitega	Burundi Franc	BIF	108	BI	BDI	108	Eastern Europe | Europe | Post USSR	Moscow | St. Petersburg | Novosibirsk | Yekaterinburg | Kazan | Nizhny Novgorod | Chelyabinsk | Samara | Omsk | Rostov-On-Don
+Serbia	Kingdom of Cambodia	Phnom Penh	Riel	KHR	116	KH	KHM	116	Southern Europe | Europe | Mediterranean Basin	Belgrade | Novi Sad | Niš | Kragujevac | Leskovac | Subotica | Kruševac | Kraljevo | Pančevo | Zrenjanin | Šabac | Čačak | Smederevo
+Spain	Republic of Cameroon	Yaounde	CFA Franc BEAC	XAF	950	CM	CMR	120	Southern Europe | Europe | Mediterranean Basin	Madrid | Barcelona | Las Palmas | Seville | Granada | Palma de Mallorca | Costa del Sol | Valencia | Malaga | San Sebastian
+Sweden	Canada	Ottawa	Canadian Dollar	CAD	124	CA	CAN	124	Northern Europe | Europe | Scandinavia | Nordic	Stockholm | Gothenburg | Malmö | Uppsala | Västerås | Örebro | Linköping | Helsingborg | Jönköping | Norrköping
+Switzerland	Republic of Cape Verde	Praia				CV	CPV	132	Western Europe |  Europe	Zürich | Geneva | Basel | Lausanne | Bern | Winterthur | Lucerne | St. Gallen | Lugano | Biel Bienne | Thun | Bellinzona | Köniz | Fribourg | La Chaux-de-Fonds
+Turkey	Cayman Islands (UK overseas territory)	George Town				KY	CYM	136	Western Asia | Asia	Istanbul | Ankara | İzmir | Bursa | Adana | Gaziantep | Konya | Antalya | Kayseri | Mersin | Eskişehir
+Ukraine	Central African Republic	Bangui				CF	CAF	140	Eastern Europe | Europe	Kyiv | Kharkiv | Odesa | Dnipro | Donetsk | Zaporizhzhia | Lviv | Kryvyi Rih
+United Kingdom	Republic of Chad	N'Djamena	CFA Franc BEAC	XAF	950	TD	TCD	148	Northern Europe | Europe	York | Portsmouth | Plymouth | Oxford | Norwich | Newcastle upon Tyne | Manchester | London | Liverpool | Leeds | Gloucester | Glasgow | Exeter | Edinburgh | Durham | Cardiff | Cambridge | Bristol | Brighton | Aberdeen
+United States	Republic of Chile	Santiago	Unidad de Fomento	CLF	990	CL	CHL	152	Northern America	New York | Los Angeles | Chicago | Houston | Phoenix | Philadelphia | San Antonio | San Diego | Dallas | San Jose | Austin
+Uzbekistan	People's Republic of China	Beijing	Yuan Renminbi	CNY	156	CN	CHN	156	Central Asia | Asia	Tashkent | Samarqand | Fergana | Namangan | Andijan | Nukus | Bukhara | Qarshi | Kokand | Margilan
+Croatia	Republic of Croatia	Zagreb	Kuna	HRK	191	HR	HRV	191	Southern Europe | Europe | Mediterranean Basin	Zagreb | Split | Rijeka | Osijek | Zadar | Velika Gorica | Slavonski Brod | Pula | Karlovac | Sisak | Varaždin | Šibenik | Dubrovnik | Bjelovar
+Czechia	Czech Republic	Prague							Europe | Eastern Europe	Prague | Brno | Ostrava | Plzeň | Liberec | Olomouc | České Budějovice | Hradec Králové | Ústí nad Labem | Pardubice | Zlín | Havířov | Kladno | Most
+Denmark	Kingdom of Denmark	Copenhagen	Danish Krone	DKK	208	DK	DNK	208	Northern Europe | Europe | Scandinavia | Nordic	Copenhagen | Aarhus | Odense | Aalborg | Esbjerg | Randers | Kolding | Horsens | Vejle | Roskilde | Herning | Hørsholm | Helsingør | Silkeborg | Næstved
+Egypt	Arab Republic of Egypt	Cairo	Egyptian Pound	EGP	818	EG	EGY	818	Northern Africa | Africa | Neil Basin | Mediterranean Basin	Cairo | Alexandria | Giza | Shubra El Kheima | Port Said | Suez | El Mahalla El Kubra | Luxor | Mansoura | Tanta | Asyut
+Finland	Republic of Finland	Helsinki	Euro	EUR	978	FI	FIN	246	Northern Europe | Europe | Nordic	Helsinki | Espoo | Tampere | Vantaa | Oulu | Turku | Jyväskylä | Lahti | Kuopio[d] | Pori | Kouvola[c] | Joensuu | Lappeenranta[e] | Hämeenlinna
+France	French Republic	Paris	Euro	EUR	978	FR	FRA	250	Western Europe |  Europe	Paris | Marseille | Lyon | Toulouse | Nice | Nantes | Montpellier | Strasbourg | Bordeaux | Lille
+Georgia	Georgia	Tbilisi	Lari	GEL	981	GE	GEO	268	Caucasus | Asia | Post USSR	Tbilisi | Batumi | Kutaisi | Rustavi | Gori | Zugdidi | Poti | Kobuleti | Khashuri | Samtredia
+Germany	Federal Republic of Germany	Berlin	Euro	EUR	978	DE	DEU	276	Western Europe |  Europe	 Berlin | Hamburg | Munich (München) | Cologne (Köln) | Frankfurt am Main | Stuttgart | Düsseldorf | Dortmund | Essen | Leipzig
+Greece	Hellenic Republic	Athens	Euro	EUR	978	GR	GRC	300	Southern Europe | Europe | Mediterranean Basin	Athens | Thessaloniki  | Patras  | Piraeus  | Larissa | Heraklion | Peristeri  | Kallithea  | Acharnes  | Kalamaria  | Nikaia  | Glyfada  | Volos | Ilio 
+Hungary	Republic of Hungary	Budapest		HUF	348	HU	HUN	348	Eastern Europe | Europe	Budapest | Debrecen | Szeged | Miskolc | Pécs | Győr | Nyíregyháza | Kecskemét
+Iceland	Republic of Iceland	Reykjavik		ISK	352	IS	ISL	352	Northern Europe | Europe | Nordic	Reykjavík | Kópavogur | Hafnarfjörður | Akureyri | Reykjanesbær | Garðabær | Mosfellsbær | Selfoss | Akranes | Seltjarnarnes
+India	Republic of India	New Delhi		INR	356	IN	IND	356	Southern Asia | Asia	Mumbai | Delhi | Bangalore | Hyderabad | Ahmedabad | Chennai | Kolkata | Surat | Pune | Jaipur | Lucknow
+Indonesia	Republic of Indonesia	Jakarta		IDR	360	ID	IDN	360	South-eastern Asia | Asia	East Jakarta | Surabaya | Bekasi | Bandung | Medan | West Jakarta | South Jakarta | Depok
+Iran	Islamic Republic of Iran	Tehran							Southern Asia	Tehran | Mashhad | Isfahan | Karaj | Shiraz | Tabriz | Qom | Ahvaz | Kermanshah | Urmia | Rasht | Zahedan
+Iraq	Republic of Iraq	Leste		IQD	368	IQ	IRQ	368	Southern Asia	Baghdad | Basra | Kirkuk | Najaf | Sulaymaniyah | Al Hillah | Amarah | Nasiriyah | Karbala | Kut | Al Diwaniyah | Ramadi | Fallujah
+Ireland	Ireland	Dublin		EUR	978	IE	IRL	372	Northern Europe | Europe	Dublin | Belfast | Cork | Derry | Limerick | Galway | Craigavon | Waterford | Drogheda | Dundalk
+Italy	Italian Republic	Rome		EUR	978	IT	ITA	380	Southern Europe | Europe | Mediterranean Basin	Rome | Milan | Naples | Turin | Palermo | Genoa | Bologna | Florence | Bari | Catania
+Japan	Japan	Tokyo		JPY	392	JP	JPN	392	Eastern Asia | Asia	 Tokyo |  Kanagawa |  Osaka |  Aichi |  Hokkaidō |  Fukuoka |  Kanagawa |  Hyōgo |  Kyoto |  Saitama |  Hiroshima |  Miyagi |  Chiba |  Fukuoka
+Kazakhstan	Republic of Kazakhstan	Nur-Sultan		KZT	398	KZ	KAZ	398	Central Asia | Asia	Almaty | Shymkent | Karagandy | Taraz | Nur-Sultan | Pavlodar | Oskemen | Semey
+South Korea	Republic of Korea	Seoul							South-eastern Asia | Asia	Seoul | Busan | Incheon | Daegu | Daejeon | Gwangju | Suwon | Ulsan
+Morocco	Kingdom of Morocco	Rabat		MAD	504	MA	MAR	504	Northern Africa | Africa | Mediterranean Basin	Casablanca | Fez | Tangier | Marrakesh | Salé | Meknes | Rabat | Oujda | Kenitra | Agadir
+Netherlands	Kingdom of the Netherlands	Amsterdam				NL	NLD	528	Western Europe |  Europe	Amsterdam | Rotterdam | The Hague | Utrecht | Eindhoven | Tilburg | Groningen | Almere | Breda | Nijmegen
+Norway	Kingdom of Norway	Oslo		NOK	578	NO	NOR	578	Northern Europe | Europe | Scandinavia | Nordic	Oslo | Bergen | Trondheim | Stavanger | Kristiansand | Fredrikstad | Sandnes | Tromsø | Skien | Drammen
+Poland	Republic of Poland	Warsaw		PLN	985	PL	POL	616	Eastern Europe | Europe	Warsaw | Kraków | Łódź | Wrocław | Poznań | Gdańsk | Szczecin | Bydgoszcz | Lublin | Białystok | Katowice | Gdynia | Częstochowa | Radom | Toruń
+Romania	Romania	Bucharest		RON	946	RO	ROU	642	Eastern Europe | Europe	Bucharest | Iași | Cluj-Napoca | Timișoara | Constanța | Craiova | Galați
+Russia	Russian Federation	Moscow							Eastern Europe | Europe | Post USSR	Moscow | St. Petersburg | Novosibirsk | Yekaterinburg | Kazan | Nizhny Novgorod | Chelyabinsk | Samara | Omsk | Rostov-On-Don
+Serbia	Republic of Serbia	Belgrade		RSD	941	RS	SRB	688	Southern Europe | Europe | Mediterranean Basin	Belgrade | Novi Sad | Niš | Kragujevac | Leskovac | Subotica | Kruševac | Kraljevo | Pančevo | Zrenjanin | Šabac | Čačak | Smederevo
+Spain	Kingdom of Spain	Madrid		EUR	978	ES	ESP	724	Southern Europe | Europe | Mediterranean Basin	Madrid | Barcelona | Las Palmas | Seville | Granada | Palma de Mallorca | Costa del Sol | Valencia | Malaga | San Sebastian
+Sweden	Kingdom of Sweden	Leste		SEK	752	SE	SWE	752	Northern Europe | Europe | Scandinavia | Nordic	Stockholm | Gothenburg | Malmö | Uppsala | Västerås | Örebro | Linköping | Helsingborg | Jönköping | Norrköping
+Switzerland	Swiss Confederation	Bern		CHE	947	CH	CHE	756	Western Europe |  Europe	Zürich | Geneva | Basel | Lausanne | Bern | Winterthur | Lucerne | St. Gallen | Lugano | Biel Bienne | Thun | Bellinzona | Köniz | Fribourg | La Chaux-de-Fonds
+Turkey	Republic of Turkey	Ankara		TRY	949	TR	TUR	792	Western Asia | Asia	Istanbul | Ankara | İzmir | Bursa | Adana | Gaziantep | Konya | Antalya | Kayseri | Mersin | Eskişehir
+Ukraine	Ukraine	Kyiv (also known as Kiev)		UAH	980	UA	UKR	804	Eastern Europe | Europe	Kyiv | Kharkiv | Odesa | Dnipro | Donetsk | Zaporizhzhia | Lviv | Kryvyi Rih
+United Kingdom	United Kingdom of Great Britain and Northern Ireland	London				GB	GBR	826	Northern Europe | Europe	York | Portsmouth | Plymouth | Oxford | Norwich | Newcastle upon Tyne | Manchester | London | Liverpool | Leeds | Gloucester | Glasgow | Exeter | Edinburgh | Durham | Cardiff | Cambridge | Bristol | Brighton | Aberdeen
+United States	United States of America	Washington, D.C.		USD	840	US	USA	840	Northern America	New York | Los Angeles | Chicago | Houston | Phoenix | Philadelphia | San Antonio | San Diego | Dallas | San Jose | Austin
+Uzbekistan	Republic of Uzbekistan	Tashkent		UZS	860	UZ	UZB	860	Central Asia | Asia	Tashkent | Samarqand | Fergana | Namangan | Andijan | Nukus | Bukhara | Qarshi | Kokand | Margilan</value>
+  </data>
+  <metadata name="Timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+</root>
