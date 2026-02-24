@@ -11,18 +11,57 @@ Public Class frmMonaqqeb
     Public WithEvents download As WebClient
     Dim encoding As Encoding
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        DowloadMonuqqeb()
+        IO.File.WriteAllText("result.html", "", Encoding.UTF8)
+        DowloadMonuqqeb(TextBox1.Text)
+        Process.Start("result.html")
+    End Sub
+
+    Sub DowloadMonuqqeb(ByVal URL As String)
+
+        While URL <> ""
+            DownLoadFile(URL, "Monaqqeb.html")
+            'Process.Start("result.html")
+            '
+            list2()
+
+            URL = getNextResult()
+        End While
+
 
     End Sub
 
-    Sub DowloadMonuqqeb()
+    Private Function getNextResult() As String
+        Dim fileBytes As Byte() = IO.File.ReadAllBytes("Monaqqeb.html")
+        Dim html As String = Encoding.GetEncoding(1256).GetString(fileBytes)
 
-        'DownLoadFile(TextBox1.Text, "Monaqqeb.html")
-        'Process.Start("Monaqqeb.html")
-        list2()
-    End Sub
+        ' Load HTML
+        Dim doc As New HtmlDocument()
+        doc.LoadHtml(html)
 
+        Dim hrefValue As String = Nothing
 
+        ' Look for the specific <img> that indicates "no more results"
+        Dim noMoreResultsImg = doc.DocumentNode.SelectSingleNode("//img[@src='../images/newimages/nomoreresults.gif' and @alt='نهائية النتائج']")
+
+        If noMoreResultsImg IsNot Nothing Then
+            ' Tag found → return empty string
+            Return ""
+        Else
+            ' Otherwise, proceed to get enclosing <a> href for other images (example)
+            Dim imgNode = doc.DocumentNode.SelectSingleNode("//img[@alt='النتائج التالية']") ' your other img condition
+            If imgNode IsNot Nothing Then
+                Dim parentLink = imgNode.ParentNode
+                If parentLink IsNot Nothing AndAlso parentLink.Name.ToLower() = "a" Then
+                    hrefValue = parentLink.GetAttributeValue("href", "")
+                Else
+                    hrefValue = ""
+                End If
+            Else
+                hrefValue = ""
+            End If
+        End If
+        Return "http://holyquran.net/cgi-bin/" & hrefValue
+    End Function
 
     Sub list2()
 
@@ -84,13 +123,13 @@ Public Class frmMonaqqeb
         End If
 
         ' Example: Print dictionary
-        IO.File.WriteAllText("result.html", "", Encoding.UTF8)
+
         For Each kvp In resultDict
             IO.File.AppendAllText("result.html", kvp.Key & "<br><br>" & kvp.Value.Item1 & "<br><br>" & kvp.Value.Item2 & "<br><br><br><br>", Encoding.UTF8)
 
         Next
 
-        Process.Start("result.html")
+
     End Sub
 
 
