@@ -26,16 +26,107 @@ Public Class Form1
     Dim prevDatTime As New DateTime(1990, 1, 1, 0, 0, 0)
     Dim GuardianIndex As Integer = 53
 
-
+    Private OriginalNodes As New List(Of TreeNode)() ' stores original root-level copies
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        'LoadLinksInotCollection()
+        ' LoadLinksInotCollection()
+        LoadTreeFromFile("C:\Users\2271\Downloads\EssaysClassifications_Updated.txt", TreeView2)
+        TreeView2.ExpandAll()
+
+        ' Backup the original tree
+        For Each n As TreeNode In TreeView2.Nodes
+            OriginalNodes.Add(CType(n.Clone(), TreeNode))
+        Next
+
 
         prevDatTime = File.GetLastWriteTime(filePath)
         pURL = Nothing
         pFile = Nothing
 
     End Sub
+
+    ''' <summary>
+    ''' Load a TreeView from a file of "index - item" lines (e.g., "1.2.3 - Title").
+    ''' Accepts separators: -, –, :, or TAB. Ignores empty / comment lines.
+    ''' </summary>
+    Private Sub LoadTreeFromFile(filePath As String, tv As TreeView)
+        If Not File.Exists(filePath) Then
+            MessageBox.Show("File not found: " & filePath)
+            Return
+        End If
+
+        tv.BeginUpdate()
+        tv.Nodes.Clear()
+
+        ' Cache nodes by full index ("1.2.3") so we can attach children quickly
+        Dim nodeByIndex As New Dictionary(Of String, TreeNode)(StringComparer.OrdinalIgnoreCase)
+
+        ' Regex: capture hierarchical index and the item text.
+        '   Group 1: digits with dot segments (e.g., 1.2.3)
+        '   Separator: -, en dash, :, or tab (with optional spaces)
+        '   Group 2: the item text
+        Dim rx As New Regex("^\s*(\d+(?:\.\d+)*)\s*(?:-|–|:|\t)\s*(.+?)\s*$", RegexOptions.Compiled)
+
+        For Each rawLine In File.ReadLines(filePath)
+            Dim line As String = rawLine.Trim()
+            If line.Length = 0 OrElse line.StartsWith("#") Then Continue For
+
+            Dim m = rx.Match(line)
+            If Not m.Success Then
+                ' Fallback: allow "index item" (space) if no separator was used
+                Dim firstSpace = line.IndexOf(" "c)
+                If firstSpace > 0 AndAlso Regex.IsMatch(line.Substring(0, firstSpace), "^\d+(?:\.\d+)*$") Then
+                    m = Regex.Match(line, "^\s*(\d+(?:\.\d+)*)\s+(.+?)\s*$")
+                    If Not m.Success Then Continue For
+                Else
+                    Continue For
+                End If
+            End If
+
+            Dim fullIndex = m.Groups(1).Value
+            Dim itemText = m.Groups(2).Value
+
+            ' Ensure all ancestor nodes exist: "1" -> "1.2" -> "1.2.3"
+            Dim parts = fullIndex.Split("."c)
+            Dim path = ""
+            Dim parentNode As TreeNode = Nothing
+
+            For i = 0 To parts.Length - 1
+                path = If(i = 0, parts(0), path & "." & parts(i))
+
+                Dim currentNode As TreeNode = Nothing
+                If nodeByIndex.TryGetValue(path, currentNode) Then
+                    parentNode = currentNode
+                    Continue For
+                End If
+
+                ' Create a new node for this index level
+
+                Dim newNode As New TreeNode(parts(i)) With {.Tag = path}
+
+
+                If parentNode Is Nothing Then
+                    tv.Nodes.Add(newNode)
+
+                Else
+                    parentNode.Nodes.Add(newNode)
+                End If
+
+                nodeByIndex(path) = newNode
+                parentNode = newNode
+            Next
+
+            ' Set the final node's display text to "index - item"
+            Dim leaf As TreeNode = nodeByIndex(fullIndex)
+            leaf.Text = fullIndex & " - " & itemText
+            leaf.ToolTipText = itemText ' optional
+            leaf.Tag = fullIndex
+        Next
+
+        tv.EndUpdate()
+        'tv.ExpandAll() ' optional
+    End Sub
+
 
     Private Sub LoadLinksInotCollection()
         Dim TExt As String = ""
@@ -1717,6 +1808,9 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
         If Files = 0 Then
             AddLinktoCheckedListBox1(Title:="Global Researches: No Downloads", Link:=Guid.NewGuid.ToString.Replace("-", ""))
         End If
+
+        IO.File.WriteAllText(System.AppDomain.CurrentDomain.BaseDirectory & "\Logs_20260127_1000.txt", "")
+
     End Sub
 
     Function downloadLatestNews_and_TopStories() As Integer
@@ -1964,14 +2058,26 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
 
         'add title to Clipboard to let Chatgpt classfy them
-        Dim Title As String = ""
-        Dim TitlesList As New List(Of String)
-        For Each ListItem As Object In CheckedListBox1.CheckedItems
-            Title = CType(ListItem, Item).Title
-            Title = Mid(Title, InStr(Title, ":") + 1)
-            If Not Title Like "*No Downloads*" Then TitlesList.Add(Title)
-        Next
-        Clipboard.SetText(Join(TitlesList.ToArray, vbCrLf))
+        'Dim Title As String = ""
+        'Dim TitlesList As New List(Of String)
+        'For Each ListItem As Object In CheckedListBox1.CheckedItems
+        '    Title = CType(ListItem, Item).Title
+        '    Title = Mid(Title, InStr(Title, ":") + 1)
+        '    If Not Title Like "*No Downloads*" Then TitlesList.Add(Title)
+        'Next
+        'Dim CHATGPTCommand As String = "using the classifications in the attached file, classify and categorize the following titles into their best fit according to the full hierarchy. "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " only show the category index prefix (like 1.1.2.3 Title...) without listing or showing any category names. "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " omit empty categories. "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " each line should start with its full classification index followed by the title. "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " make sure no title is skipped. "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " you can assign a title to more than one category if applicable. "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " if a title doesn’t fit any category, put it under ""7. UNCATEGORIZED / MISCELLANEOUS"". "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " make a downloadable txt file named " & Now.ToString("yyyyMMdd") & "_indexed.txt "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & " Preserve totles exactly as written: "
+        'CHATGPTCommand = CHATGPTCommand & vbCrLf & ""
+
+
+        'Clipboard.SetText(CHATGPTCommand & vbCrLf & Join(TitlesList.ToArray, vbCrLf))
         'end of: add title to Clipboard to let Chatgpt classfy them ===================================================
         'Exit Sub
         'get the classified titles ===============
@@ -1984,23 +2090,23 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
         ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
         ofd.Multiselect = False
 
-        ' Show dialog
-        If ofd.ShowDialog() = DialogResult.OK Then
-            dict = BringClassifiedTitles(ofd.FileName)
-        Else
-            Exit Sub
-        End If
-        'End of: get the classified titles ===============
+        '' Show dialog
+        'If ofd.ShowDialog() = DialogResult.OK Then
+        '    dict = BringClassifiedTitles(ofd.FileName)
+        'Else
+        '    Exit Sub
+        'End If
+        ''End of: get the classified titles ===============
 
 
-        Dim listOfDirectories As New List(Of String)
-        Dim listOfLinks As New List(Of String)
+        'Dim listOfDirectories As New List(Of String)
+        'Dim listOfLinks As New List(Of String)
 
-        getDirsAndLinks(listOfDirectories, listOfLinks)
+        'getDirsAndLinks(listOfDirectories, listOfLinks)
 
-        For I As Integer = 0 To listOfDirectories.Count - 1
-            analysFile(listOfDirectories(I))
-        Next
+        'For I As Integer = 0 To listOfDirectories.Count - 1
+        '    analysFile(listOfDirectories(I))
+        'Next
 
 
         For Each ListItem As Object In CheckedListBox1.CheckedItems
@@ -2321,8 +2427,7 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
 
         Dim indxTitle As Integer = 2
         Dim indxDate As Integer = 1
-
-
+        Dim indxIndex As Integer = 4
 
         Dim SearchField As New List(Of Integer)
         Dim SearchValues As New List(Of String)
@@ -2336,6 +2441,9 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
             Case TextBox2.Enabled = True And DateTimePicker1.Enabled = False
                 SearchField.Add(indxTitle)
                 SearchValues.Add("*" & TextBox2.Text.ToLower.Trim & "*")
+
+                SearchField.Add(indxIndex)
+                SearchValues.Add("*" & TextBox2.Text.ToLower.Trim & "*")
                 glTitle = "All Entries containing '" & TextBox2.Text.ToLower.Trim & "'"
             Case TextBox2.Enabled = False And DateTimePicker1.Enabled = True
                 SearchField.Add(indxDate)
@@ -2347,39 +2455,63 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
 
                 SearchField.Add(indxTitle)
                 SearchValues.Add("*" & TextBox2.Text.ToLower.Trim & "*")
-                glTitle = "All Entries of " & DateTimePicker1.Value.ToString("yyyy-MM-dd") & " containing '" & TextBox2.Text.ToLower.Trim & "'"
 
+                SearchField.Add(indxIndex)
+                SearchValues.Add("*" & TextBox2.Text.ToLower.Trim & "*")
+
+                glTitle = "All Entries of " & DateTimePicker1.Value.ToString("yyyy-MM-dd") & " containing '" & TextBox2.Text.ToLower.Trim & "'"
         End Select
 
 
-
-
+        Dim LineComp() As String
         For Each KV As KeyValuePair(Of String, String) In Dic
             Match = False
+
             Temp = Split(KV.Key & vbTab & KV.Value, vbTab)
+            If Temp.Length < 5 Then
+                While Temp.Length < 5
+                    Dim l As New List(Of String)
+                    l = Temp.ToList
+                    l.Add("7")
+                    Temp = l.ToArray
+                End While
+            End If
+
+
 
             For I As Integer = 0 To SearchField.Count - 1
                 Dim A As String = Temp(SearchField(I)).ToLower
                 Dim B As String = SearchValues(I)
-
-                If Temp(SearchField(I)).ToLower Like SearchValues(I) Then
-                    Match = True
+                If SearchField(I) <> 4 Then
+                    If Temp(SearchField(I)).ToLower Like SearchValues(I) Then
+                        Match = True
+                        Exit For
+                    Else
+                        Match = False
+                    End If
                 Else
-                    Match = False
-                    Exit For
+                    Dim tempArr As String()
+                    tempArr = Split(Temp(SearchField(I)), ",")
+                    For Each index As String In tempArr
+                        If index = SearchValues(I).Replace("*", "") Then
+                            Match = True
+                            Exit For
+                        End If
+                    Next
                 End If
+
 
             Next I
 
             If Match Then
-                CheckedListBox1.Items.Add(New Item(Title:=Split(KV.Value, vbTab)(1), Link:=KV.Key))
+                LineComp = Split(KV.Value, vbTab)
+                Try
+                    CheckedListBox1.Items.Add(New Item(Title:=LineComp(1), Link:=KV.Key, Indexes:=LineComp(3)))
+                Catch ex As Exception
+                    CheckedListBox1.Items.Add(New Item(Title:=LineComp(1), Link:=KV.Key, Indexes:="8"))
+                End Try
             End If
         Next
-
-
-
-
-
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
@@ -2397,96 +2529,253 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
 
         Dim myDic As New Dictionary(Of String, List(Of Object))
 
-        For Each item As Item In CheckedListBox1.Items
-            Site = getTitleWithoutPranthesesOrColon(item.Title).Trim
-            Dim L As New List(Of Object)
 
-            If myDic.ContainsKey(Site) Then
-                L = CType(myDic(Site), Object)
-                myDic.Remove(Site)
-            End If
+        Select Case CheckBox4.Checked
+            Case False
+                'iterate throw checkboxlist to get the link and title ========================================
+                For Each item As Item In CheckedListBox1.Items
+                    Site = getTitleWithoutPranthesesOrColon(item.Title).Trim
+                    Dim L As New List(Of Object)
 
-            L.Add(item)
-            myDic.Add(Site, L)
-        Next
-
-        For Each KV As KeyValuePair(Of String, List(Of Object)) In myDic
-            Dim L As New List(Of Object)
-            L = CType(KV.Value, List(Of Object))
-
-            ' refine the list, if it contains > 1 item, then delete any item with No Downloads "
-            While L.Count > 1 And L.FirstOrDefault(Function(x) x.Title.Contains("No Downloads")) IsNot Nothing
-                Dim itemToRemove = L.FirstOrDefault(Function(x) x.Title.Contains("No Downloads"))
-                If itemToRemove IsNot Nothing Then
-                    L.Remove(itemToRemove)
-                End If
-            End While
-            'end of refine================================
-
-
-            For Each item As Item In L ' CheckedListBox1.Items
-
-                If Site <> getTitleWithoutPranthesesOrColon(item.Title) Then
-                    Site = getTitleWithoutPranthesesOrColon(item.Title)
-
-
-                    If FileIsEmpty = False Then
-                        IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "</ul>" & vbCrLf)
-                        IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<br>" & vbCrLf)
+                    If myDic.ContainsKey(Site) Then
+                        L = CType(myDic(Site), Object)
+                        myDic.Remove(Site)
                     End If
 
-                    'Write Title
-                    Dim ColorPhrase As String = ""
-                    If InStr(item.Title.ToUpper, "No Downloads".ToUpper) Then
-                        ColorPhrase = "Color:red"
+                    L.Add(item)
+                    myDic.Add(Site, L)
+                Next
+                'end of: iterate throw checkboxlist to get the link and title ===============================
+
+
+
+
+                For Each KV As KeyValuePair(Of String, List(Of Object)) In myDic
+                    Dim L As New List(Of Object)
+                    L = CType(KV.Value, List(Of Object))
+
+                    ' refine the list, if it contains > 1 item, then delete any item with No Downloads "
+                    While L.Count > 1 And L.FirstOrDefault(Function(x) x.Title.Contains("No Downloads")) IsNot Nothing
+                        Dim itemToRemove = L.FirstOrDefault(Function(x) x.Title.Contains("No Downloads"))
+                        If itemToRemove IsNot Nothing Then
+                            L.Remove(itemToRemove)
+                        End If
+                    End While
+                    'end of refine================================
+
+                    For Each item As Item In L ' CheckedListBox1.Items
+
+                        If Site <> getTitleWithoutPranthesesOrColon(item.Title) Then
+                            Site = getTitleWithoutPranthesesOrColon(item.Title)
+
+
+                            If FileIsEmpty = False Then
+                                IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "</ul>" & vbCrLf)
+                                IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<br>" & vbCrLf)
+                            End If
+
+                            'Write Title
+                            Dim ColorPhrase As String = ""
+                            If InStr(item.Title.ToUpper, "No Downloads".ToUpper) Then
+                                ColorPhrase = "Color:red"
+                            End If
+
+                            IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", TitlePhrase.Replace("@SITE", Site).Replace("@ColorPhrase", ColorPhrase) & vbCrLf)
+                            IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", UnorderListPhrase & vbCrLf)
+
+                            FileIsEmpty = False
+
+                            If Color = "color:#FFFFFF" Then
+                                Color = "color:#DEEAF6"
+                            Else
+                                Color = "#FFFFFF"
+                            End If
+                        End If
+
+                        'IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<li><div style="" background-color: " & Color & ";""><a href=""" & item.Link & """>" & item.Title & "</a></div></li>" & vbCrLf)
+                        If InStr(item.Title.ToUpper, "No Downloads".ToUpper) Then
+
+                        Else
+                            IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<li style=""margin: 12px 0""><a href=""" & item.Link & """  target=""_blank"" >" & item.Title & "</a></li>" & vbCrLf)
+                        End If
+                    Next
+                Next
+                IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "</ul>" & vbCrLf)
+            Case Else
+                Dim index As New List(Of String)
+                'iterate throw checkboxlist to get the link and title ========================================
+                For Each item As Item In CheckedListBox1.Items
+                    index = item.indices
+
+                    Dim L As New List(Of Object)
+                    For Each SingleIndex In index
+                        L.Clear()
+
+                        If myDic.ContainsKey(SingleIndex) Then
+                            L = CType(myDic(SingleIndex), Object)
+                            myDic.Remove(SingleIndex)
+                        End If
+
+                        L.Add(item)
+                        myDic.Add(SingleIndex, L)
+                    Next
+                Next
+                'end of: iterate throw checkboxlist to get the link and title ===============================
+
+                'Sort the dictionary ==========================================
+                Dim L1 As New List(Of String)
+                L1.AddRange(myDic.Keys)
+                L1.Sort()
+                Dim tempDic As New Dictionary(Of String, List(Of Object))
+                For Each lcIndex In L1
+                    tempDic.Add(lcIndex, myDic(lcIndex))
+                Next
+                myDic = tempDic
+                'end of: Sort the dictionary ==================================
+
+                'Build the required Titles Hierarchy=================
+                Dim titlesDict As New Dictionary(Of String, String)
+                titlesDict = GetHierarchyTitles(MyDic:=myDic, titlesDict:=titlesDict)
+                'end of ====================================================
+
+                '===========================================================
+                Dim dt As New DataTable("Hierarchy")
+                dt.Columns.Add("INDEX", GetType(String))
+                dt.Columns.Add("TITLE", GetType(String))
+                dt.Columns.Add("lcPARENT", GetType(String))
+
+                For Each KV As KeyValuePair(Of String, String) In titlesDict
+                    Dim Parent As String = ""
+                    If KV.Key.Contains(".") Then
+                        PArent = KV.Key.Substring(0, KV.Key.LastIndexOf("."c))
                     End If
 
-                    IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", TitlePhrase.Replace("@SITE", Site).Replace("@ColorPhrase", ColorPhrase) & vbCrLf)
-                    IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", UnorderListPhrase & vbCrLf)
+                    dt.Rows.Add(KV.Key, KV.Value, Parent)
+                    dt.AcceptChanges()
+                Next
+                DataGridView1.DataSource = dt.DefaultView
+                'end of=========================================================
 
-                    FileIsEmpty = False
 
-                    If Color = "color:#FFFFFF" Then
-                        Color = "color:#DEEAF6"
-                    Else
-                        Color = "#FFFFFF"
-                    End If
-                End If
+                IterateThroughTable(DT:=dt, CurrentRow:=Nothing, Titles:=myDic)
+                ' MsgBox(Text1)
+        End Select
 
-                'IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<li><div style="" background-color: " & Color & ";""><a href=""" & item.Link & """>" & item.Title & "</a></div></li>" & vbCrLf)
-                If InStr(item.Title.ToUpper, "No Downloads".ToUpper) Then
-
-                Else
-                    IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<li style=""margin: 12px 0""><a href=""" & item.Link & """  target=""_blank"" >" & item.Title & "</a></li>" & vbCrLf)
-                End If
-            Next
-        Next
-
-        IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "</ul>" & vbCrLf)
         addLowerPartOfHTMLpage()
         Process.Start(System.AppDomain.CurrentDomain.BaseDirectory & "links.html")
         'WebBrowser1.Url = New Uri(System.AppDomain.CurrentDomain.BaseDirectory & "links.html")
+    End Sub
+    Dim Text1 As String = ""
 
+    Private Sub IterateThroughTable(DT As DataTable, CurrentRow As DataRow, Titles As Dictionary(Of String, List(Of Object)))
+        Dim index As String
+        If CurrentRow Is Nothing Then
+            index = ""
+        Else
+            index = CurrentRow("INDEX")
+            ' Text1 = Text1 & vbCrLf & Space() & index & CurrentRow("TITLE")
+        End If
 
-        '====================================
-        'remove title before colon and add it to clipboard
-        Dim Title As String = ""
-        Dim TitlesList As New List(Of String)
+        Dim DR() As DataRow
+        DR = DT.Select("lcPARENT='" & index & "'")
 
+        If DR.Count > 0 Then
 
-        For Each item As Item In CheckedListBox1.Items
-            Title = item.Title
-            'MsgBox(Title)
-            Title = Mid(Title, InStr(Title, ":") + 1)
-            If Title <> " No Downloads" Then TitlesList.Add(Title)
+            For Each singleDR As DataRow In DR
+                IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<ul>")
+                IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<li>" & singleDR("TITLE") & "</li>")
 
-        Next
+                If Titles.ContainsKey(singleDR("INDEX")) Then
+                    IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<ul>")
 
-        Clipboard.SetText(Join(TitlesList.ToArray, vbCrLf))
-
+                    Dim Items As List(Of Object) = Titles(singleDR("INDEX"))
+                    For Each lcItem In Items
+                        IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "<li style=""margin: 14px 0""><a href=""" & lcItem.Link & """  target=""_blank"" >" & lcItem.Title & "</a></li>")
+                    Next
+                    IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "</ul>")
+                End If
+                IterateThroughTable(DT, singleDR, Titles)
+            Next
+        End If
+        IO.File.AppendAllText(System.AppDomain.CurrentDomain.BaseDirectory & "links.html", "</ul>")
 
 
     End Sub
+
+    Function LoadIndexTitlesDictionary(filePath As String) As Dictionary(Of String, String)
+        Dim dict As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+
+        ' Read all lines from the text file
+        For Each line As String In File.ReadAllLines(filePath)
+            Dim trimmedLine As String = line.Trim()
+            If String.IsNullOrEmpty(trimmedLine) Then Continue For
+
+
+            Dim idx As String = Split(trimmedLine, " ", 2)(0)
+            idx = idx.Trim().TrimEnd("."c)
+
+            Dim title As String = Split(trimmedLine, " ", 2)(1)
+
+            ' Avoid duplicates, if necessary
+            If Not dict.ContainsKey(idx) Then
+                dict.Add(idx, title)
+            End If
+        Next
+
+        Return dict
+    End Function
+
+    Function GetHierarchyTitles(ByVal MyDic As Dictionary(Of String, List(Of Object)),
+                                titlesDict As Dictionary(Of String, String)) As Dictionary(Of String, String)
+
+
+        'load all titles into MainDic ===================================
+        Dim dict As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+
+        ' Read all lines from the text file
+        For Each line As String In File.ReadAllLines("C:\Users\2271\Downloads\EssaysClassifications_Updated.txt")
+            Dim trimmedLine As String = line.Trim()
+            If String.IsNullOrEmpty(trimmedLine) Then Continue For
+
+
+            Dim idx As String = Split(trimmedLine, " ", 2)(0)
+            idx = idx.Trim().TrimEnd("."c)
+
+            Dim title As String = Split(trimmedLine, " ", 2)(1)
+
+            ' Avoid duplicates, if necessary
+            If Not dict.ContainsKey(idx) Then
+                dict.Add(idx, title)
+            End If
+        Next
+        'End of: load all titles into MainDic ===================================
+
+
+        For Each Key As String In MyDic.Keys
+
+            Key = TrimTrailingDot(Key)
+
+            Dim parts = Key.Split("."c)
+            Dim current As String = ""
+            For i As Integer = 0 To parts.Length - 1
+                ' Build the progressive index (5 → 5.3 → 5.3.1 → 5.3.1.2)
+                current = If(current = "", parts(i), current & "." & parts(i))
+
+                If titlesDict.ContainsKey(current) = False Then
+                    titlesDict.Add(current, dict(current))
+                End If
+            Next
+        Next
+        Return titlesDict
+    End Function
+
+    Function TrimTrailingDot(index As String) As String
+        If index IsNot Nothing AndAlso index.EndsWith(".") Then
+            Return index.TrimEnd("."c)
+        End If
+        Return index
+    End Function
+
 
     Private Sub addLowerPartOfHTMLpage()
 
@@ -2767,12 +3056,12 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
     End Function
 
     Private Sub Button14_Click(sender As Object, e As EventArgs) Handles Button14.Click
-        'ListGuardianIran(FileName:="GuaridianIran.txt")
+        ListGuardianIran(FileName:="GuaridianIran.txt")
 
         'DownlaodGuaridianOpinion()
 
         'DownloadTheConversation()
-        ListTheConversation()
+        'ListTheConversation()
 
     End Sub
 
@@ -2790,67 +3079,24 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
 
         Dim allContent As String
         allContent = IO.File.ReadAllText(System.AppDomain.CurrentDomain.BaseDirectory & "/" & FileName)
-        Dim allcontentArr As String() = Split(allContent, "<div class=""dcr-1xy81lp"">")
-
-        Dim L As New List(Of String)
-        L = allcontentArr.ToList
-        L.RemoveAll(Function(str As String) String.IsNullOrWhiteSpace(str))
-        L.RemoveAll(Function(str As String) String.IsNullOrEmpty(str))
-        allcontentArr = L.ToArray
-
-        RemoveFirstCell(allcontentArr)
-        L.Clear()
+        Dim allcontentArr As String() = Split(allContent, "<li class=""")
 
         Dim Link As String = ""
         Dim Title As String
         Dim Auther As String
-
+        RemoveFirstCell(allcontentArr)
         For Each entry As String In allcontentArr
             Link = entry
             Title = entry
-            Auther = entry
-
 
             RemoveWhatIsBefore(Link, "<a href=""", False)
             RemoveWhatIsAfter(Link, """", False)
-
-
             Link = "https://www.theguardian.com/" & Link
 
-            RemoveWhatIsBefore(Title, "<h", False)
+            RemoveWhatIsBefore(Title, "headline-text", False)
             RemoveWhatIsBefore(Title, ">", False)
-            RemoveWhatIsAfter(Title, "</h", False)
+            RemoveWhatIsAfter(Title, "<", False)
 
-            Dim Tags As String()
-            Tags = Split(Title, "<")
-
-            For I As Integer = 0 To Tags.Count - 1
-                Try
-
-                    Tags(I) = Tags(I).Substring(Tags(I).IndexOf(">"))
-                    Tags(I) = Tags(I).Replace(">", "")
-
-                    L.Clear()
-                    L = Tags.ToList
-                    L.RemoveAll(Function(str As String) String.IsNullOrWhiteSpace(str))
-                    L.RemoveAll(Function(str As String) String.IsNullOrEmpty(str))
-                    Title = Join(L.ToArray)
-                Catch ex As Exception
-
-                End Try
-
-            Next
-
-            If Auther.Contains("<span class=""dcr-1tmbud3") Or Auther.Contains("<span class=""dcr-2n3kt1"">") Then
-                RemoveWhatIsBefore(Auther, "<span class=""dcr-1tmbud3"">", False)
-                RemoveWhatIsBefore(Auther, "<span class=""dcr-2n3kt1"">", False)
-                RemoveWhatIsAfter(Auther, "</span>", False)
-                Auther = "(" & Auther & ") "
-            Else
-                Auther = ""
-            End If
-
-            Title = Auther & Title
             refineTitle(Title)
 
             If Trim(Title) <> "" Then
@@ -2861,6 +3107,77 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
         If Files = 0 Then
             AddLinktoCheckedListBox1(Title:="Guardian Iran" & ": No Downloads", Link:=Guid.NewGuid.ToString.Replace("-", ""))
         End If
+
+
+        'Dim L As New List(Of String)
+        'L = allcontentArr.ToList
+        'L.RemoveAll(Function(str As String) String.IsNullOrWhiteSpace(str))
+        'L.RemoveAll(Function(str As String) String.IsNullOrEmpty(str))
+        'allcontentArr = L.ToArray
+
+        'RemoveFirstCell(allcontentArr)
+        'L.Clear()
+
+        'Dim Link As String = ""
+        'Dim Title As String
+        'Dim Auther As String
+
+        'For Each entry As String In allcontentArr
+        '    Link = entry
+        '    Title = entry
+        '    Auther = entry
+
+
+        '    RemoveWhatIsBefore(Link, "<a href=""", False)
+        '    RemoveWhatIsAfter(Link, """", False)
+
+
+        '    Link = "https://www.theguardian.com/" & Link
+
+        '    RemoveWhatIsBefore(Title, "<h", False)
+        '    RemoveWhatIsBefore(Title, ">", False)
+        '    RemoveWhatIsAfter(Title, "</h", False)
+
+        '    Dim Tags As String()
+        '    Tags = Split(Title, "<")
+
+        '    For I As Integer = 0 To Tags.Count - 1
+        '        Try
+
+        '            Tags(I) = Tags(I).Substring(Tags(I).IndexOf(">"))
+        '            Tags(I) = Tags(I).Replace(">", "")
+
+        '            L.Clear()
+        '            L = Tags.ToList
+        '            L.RemoveAll(Function(str As String) String.IsNullOrWhiteSpace(str))
+        '            L.RemoveAll(Function(str As String) String.IsNullOrEmpty(str))
+        '            Title = Join(L.ToArray)
+        '        Catch ex As Exception
+
+        '        End Try
+
+        '    Next
+
+        '    If Auther.Contains("<span class=""dcr-1tmbud3") Or Auther.Contains("<span class=""dcr-2n3kt1"">") Then
+        '        RemoveWhatIsBefore(Auther, "<span class=""dcr-1tmbud3"">", False)
+        '        RemoveWhatIsBefore(Auther, "<span class=""dcr-2n3kt1"">", False)
+        '        RemoveWhatIsAfter(Auther, "</span>", False)
+        '        Auther = "(" & Auther & ") "
+        '    Else
+        '        Auther = ""
+        '    End If
+
+        '    Title = Auther & Title
+        '    refineTitle(Title)
+
+        '    If Trim(Title) <> "" Then
+        '        If AddLinktoCheckedListBox1(Title:="Guardian Iran" & ": " & Title, Link:=Link) Then Files = Files + 1
+        '    End If
+        'Next
+
+        'If Files = 0 Then
+        '    AddLinktoCheckedListBox1(Title:="Guardian Iran" & ": No Downloads", Link:=Guid.NewGuid.ToString.Replace("-", ""))
+        'End If
     End Sub
 
 
@@ -3552,10 +3869,19 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
     End Sub
 
     Private Sub Button16_Click(sender As Object, e As EventArgs) Handles Button16.Click
-        TextBox4.Text = ""
-        'MsgBox(Now.ToString("yyyy-MM-dd HH:mm"))
-        MaskedTextBox1.Text = Now.ToString("HH:mm")
+        Dim Text As String = TextBox4.Text
+        Dim arrText As New List(Of String)
+        arrText = Split(Text, "<div class=""noteText"">").ToList
 
+        arrText = arrText.Select(Of String)(Function(X) X.Replace(vbCrLf, "")).ToList
+
+        arrText = arrText.Select(Of String)(Function(X) Strings.Left(X, InStr(X, "<") - 1)).ToList
+
+        arrText.RemoveAll(Function(str As String) String.IsNullOrWhiteSpace(str))
+        arrText.RemoveAll(Function(str As String) String.IsNullOrEmpty(str))
+
+
+        Clipboard.SetText(Join(arrText.ToArray, vbCrLf))
     End Sub
 
     Private Sub Button15_Click(sender As Object, e As EventArgs) Handles Button15.Click
@@ -3563,7 +3889,7 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
         ' Set dialog properties
         ofd.Title = "Select a Text File"
         ofd.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-        ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+        ofd.InitialDirectory = "D:\VB Projects\Downloads\bin\Debug\File1000LinesEach\" 'Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
         ofd.Multiselect = False
 
         ' Show dialog
@@ -3571,6 +3897,7 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
 
         If ofd.ShowDialog() = DialogResult.OK Then
             Using reader As New StreamReader(ofd.FileName)
+                Label2.Text = ofd.FileName
                 Dim line As String
                 While Not reader.Peek
                     ' Split the line by vbTab into an array
@@ -3595,15 +3922,70 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
         CHATGPTCommand = CHATGPTCommand & vbCrLf & " you can assign a title to more than one category if applicable. "
         CHATGPTCommand = CHATGPTCommand & vbCrLf & " if a title doesn’t fit any category, put it under ""7. UNCATEGORIZED / MISCELLANEOUS ""."
         CHATGPTCommand = CHATGPTCommand & vbCrLf & " Preserve titles exactly as written "
-        CHATGPTCommand = CHATGPTCommand & vbCrLf & " Preserve titles exactly as written "
+        CHATGPTCommand = CHATGPTCommand & vbCrLf & " make the result into a downloadable txt file named '" & IO.Path.GetFileNameWithoutExtension(Label2.Text) & "_INDEXED.txt" & "' " & vbCrLf
 
 
         Clipboard.SetText(CHATGPTCommand & vbCrLf & Join(L.ToArray, vbCrLf))
 
-        MsgBox("Title are in Clipbpard...")
+        MsgBox("(" & L.Count & ") Title are in Clipbpard...")
     End Sub
 
     Private Sub Button17_Click(sender As Object, e As EventArgs) Handles Button17.Click
+        'get the classified titles ===============
+        Dim dict As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+
+        Dim ofd As New OpenFileDialog()
+        ' Set dialog properties
+        ofd.Title = "Select a Text File"
+        ofd.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+        ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+        ofd.Multiselect = False
+
+        ' Show dialog
+        If ofd.ShowDialog() = DialogResult.OK Then
+            dict = BringClassifiedTitles(ofd.FileName)
+        Else
+            Exit Sub
+        End If
+        'End of: get the classified titles ===============
+
+
+        Dim inFile As New IO.StreamReader(Label2.Text)
+
+        Dim outFileName As String = IO.Path.GetDirectoryName(Label2.Text) & "\" & IO.Path.GetFileNameWithoutExtension(Label2.Text) & "_INDEXED" & IO.Path.GetExtension(Label2.Text)
+
+        Dim outFile As New IO.StreamWriter(outFileName) 'Label2.Text)
+        Dim oneLine As String = ""
+        Dim arrOneLine() As String = Nothing
+        Dim TITLE As String = ""
+        Dim index As String = ""
+        While Not inFile.Peek
+            index = "8"
+
+            oneLine = inFile.ReadLine
+            arrOneLine = Split(oneLine, vbTab)
+            TITLE = arrOneLine(2).Trim()
+            TITLE = Mid(TITLE, InStr(TITLE, ":") + 1).Trim()
+            Try
+                index = dict(TITLE)
+            Catch ex As Exception
+
+            End Try
+            outFile.WriteLine(oneLine & vbTab & index)
+
+        End While
+
+
+
+        inFile.Close()
+        outFile.Flush()
+        outFile.Close()
+
+
+        IO.File.Move(Label2.Text, IO.Path.GetDirectoryName(Label2.Text) & "\Done\" & IO.Path.GetFileName(Label2.Text))
+
+
+        MsgBox("Done")
 
     End Sub
 
@@ -3612,34 +3994,7 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
     End Sub
 
     Private Sub Button18_Click(sender As Object, e As EventArgs) Handles Button18.Click
-        'WebBrowser1.Url = New Uri("https://www.globalresearch.ca/latest-news-and-top-stories")
-
-        'Dim webClient As New System.Net.WebClient
-        'Dim result As String = webClient.DownloadString("https://www.globalresearch.ca/")
-
-
-        'Dim WE As New WebClient
-
-        'Dim pageData As Byte()
-        'pageData = WE.DownloadData("https://www.globalresearch.ca/latest-news-and-top-stories")
-        'Dim pageHtml As String = System.Text.Encoding.ASCII.GetString(pageData)
-
-        '  WebBrowser1.Navigate(New Uri("https://www.globalresearch.ca/news"))
-
-        'DownloadScienceFocus()
-        'ListScienceFocus()
-
-
-        'Dim request As WebRequest = WebRequest.Create("https://katehon.com/en/articles?page=0")
-        'Using response As WebResponse = request.GetResponse()
-        '    Using reader As New StreamReader(response.GetResponseStream())
-        '        Dim html As String = reader.ReadToEnd()
-        '        File.WriteAllText("test.html", html)
-        '    End Using
-        'End Using
-
-        Dim sourceString As String = New System.Net.WebClient().DownloadString("https://www.theguardian.com/science/")
-        File.WriteAllText("test.html", sourceString)
+        MsgBox(TreeView2.SelectedNode.Tag)
     End Sub
 
     Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
@@ -3721,16 +4076,22 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
 
     End Sub
 
-    Private Sub TabPage1_Click(sender As Object, e As EventArgs) Handles TabPage1.Click
 
-    End Sub
 
     Private Sub Button19_Click(sender As Object, e As EventArgs) Handles Button19.Click
+        Exit Sub
+
         ' ===== CONFIGURATION =====
-        Dim inputFile As String = "D:\VB Projects\Downloads\bin\Debug\Done.txt"
+        Dim inputFile As String = "D:\VB Projects\Downloads\bin\Debug\CorrectedDone.txt"
         Dim outputFolder As String = "D:\VB Projects\Downloads\bin\Debug\File1000LinesEach\"
         Dim linesPerFile As Integer = 1000
         ' ==========================
+        Try
+            Kill("D:\VB Projects\Downloads\bin\Debug\File1000LinesEach\*.txt")
+        Catch ex As Exception
+
+        End Try
+
 
         If Not Directory.Exists(outputFolder) Then
             Directory.CreateDirectory(outputFolder)
@@ -3740,40 +4101,117 @@ System.AppDomain.CurrentDomain.BaseDirectory & "/TheConversation_us.txt"))
         Dim lineCounter As Integer = 0
         Dim writer As StreamWriter = Nothing
 
+        Dim previousDate As String = ""
+
+        Dim line As String
+        Dim arrline() As String
+        Dim outputFile As String = ""
+        Dim Lines As String = ""
         Try
             Using reader As New StreamReader(inputFile)
-                Dim line As String
-
-                While (reader.Peek() >= 0)
-                    If lineCounter = 0 Then
-                        Dim outputFile As String = Path.Combine(outputFolder, $"Part_{fileCounter:D3}.txt")
-                        writer = New StreamWriter(outputFile, False)
-                        Console.WriteLine($"Creating {outputFile}...")
-                    End If
-
+                While Not reader.Peek
                     line = reader.ReadLine()
-                    writer.WriteLine(line)
-                    lineCounter += 1
+                    arrline = Split(line, vbTab)
 
-                    If lineCounter >= linesPerFile Then
-                        writer.Close()
-                        writer.Dispose()
-                        writer = Nothing
-                        lineCounter = 0
-                        fileCounter += 1
+
+                    'Try
+                    '    Dim A = arrline(1).Trim
+                    'Catch ex As Exception
+                    '    Lines = Lines & vbCrLf & line
+                    'End Try
+
+                    If previousDate.Trim <> arrline(1).Trim Then
+
+                        If writer IsNot Nothing Then
+                            writer.Close()
+                            writer.Dispose()
+
+                            previousDate = arrline(1).Trim
+
+                            outputFile = Path.Combine(outputFolder, $"{arrline(1)}.txt")
+                            writer = New StreamWriter(outputFile, False)
+                        Else
+                            outputFile = Path.Combine(outputFolder, $"{arrline(1)}.txt")
+                            writer = New StreamWriter(outputFile, False)
+                        End If
+
+
                     End If
+
+                    writer.WriteLine(line)
+
                 End While
             End Using
 
         Finally
-            If writer IsNot Nothing Then
-                writer.Close()
-                writer.Dispose()
-            End If
-        End Try
 
+        End Try
+        ' Clipboard.SetText(Lines)
         MsgBox("done")
 
+    End Sub
+
+    Private Function MakeNode(text As String, children() As String) As TreeNode
+        Dim root As New TreeNode(text)
+        For Each c In children
+            root.Nodes.Add(New TreeNode(c))
+        Next
+        Return root
+    End Function
+
+    ' Search as you type (you can also trigger on Button click)
+    Private Sub TextBox5_TextChanged(sender As Object, e As EventArgs) Handles TextBox5.TextChanged
+        Dim term As String = TextBox5.Text.Trim()
+        FilterTree(TreeView2, term)
+    End Sub
+
+    Private Sub FilterTree(tv As TreeView, searchText As String)
+        tv.BeginUpdate()
+        tv.Nodes.Clear()
+
+        If String.IsNullOrEmpty(searchText) Then
+            ' Restore full tree
+            For Each n As TreeNode In OriginalNodes
+                tv.Nodes.Add(CType(n.Clone(), TreeNode))
+            Next
+            tv.EndUpdate()
+            tv.ExpandAll()
+            Return
+        End If
+
+        ' Filtered view: keep only matching nodes (and ancestors)
+        Dim filtered As New List(Of TreeNode)
+        For Each root In OriginalNodes
+            Dim match As TreeNode = FilterNode(root, searchText)
+            If match IsNot Nothing Then
+                filtered.Add(match)
+            End If
+        Next
+
+        tv.Nodes.AddRange(filtered.ToArray())
+        tv.ExpandAll()
+        tv.EndUpdate()
+    End Sub
+
+    ' Recursive filter function — returns a copy of node if it or children match
+    Private Function FilterNode(node As TreeNode, term As String) As TreeNode
+        Dim copy As TreeNode = CType(node.Clone(), TreeNode)
+        copy.Nodes.Clear()
+        Dim matched As Boolean = node.Text.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0
+
+        For Each child As TreeNode In node.Nodes
+            Dim filteredChild As TreeNode = FilterNode(child, term)
+            If filteredChild IsNot Nothing Then
+                copy.Nodes.Add(filteredChild)
+                matched = True
+            End If
+        Next
+
+        Return If(matched, copy, Nothing)
+    End Function
+
+    Private Sub Button20_Click(sender As Object, e As EventArgs) Handles Button20.Click
+        frmMonaqqeb.Show()
     End Sub
 End Class
 
@@ -3782,6 +4220,13 @@ Class Item
         _Title = Title
         _Link = Link
     End Sub
+
+    Sub New(ByVal Title As String, ByVal Link As String, ByVal Indexes As String)
+        _Title = Title
+        _Link = Link
+        Me.indexes = Indexes
+    End Sub
+
     Private _Title As String
     Public Property Title As String
         Get
@@ -3801,6 +4246,19 @@ Class Item
         Set(value As String)
             _Link = value
         End Set
+    End Property
+
+    Private _indexes As String
+    Public WriteOnly Property indexes As String
+        Set(value As String)
+            _indexes = value
+        End Set
+    End Property
+
+    Public ReadOnly Property indices As List(Of String)
+        Get
+            Return Split(_indexes, ",").ToList
+        End Get
     End Property
 
 

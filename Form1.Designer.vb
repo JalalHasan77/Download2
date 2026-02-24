@@ -29,6 +29,7 @@ Partial Class Form1
         Me.Button3 = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.CheckBox4 = New System.Windows.Forms.CheckBox()
         Me.CheckBox3 = New System.Windows.Forms.CheckBox()
         Me.Button14 = New System.Windows.Forms.Button()
         Me.Button9 = New System.Windows.Forms.Button()
@@ -61,10 +62,16 @@ Partial Class Form1
         Me.Button18 = New System.Windows.Forms.Button()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.Button19 = New System.Windows.Forms.Button()
+        Me.DataGridView1 = New System.Windows.Forms.DataGridView()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.TreeView2 = New System.Windows.Forms.TreeView()
+        Me.TextBox5 = New System.Windows.Forms.TextBox()
+        Me.Button20 = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TabPage2.SuspendLayout()
         Me.TabPage3.SuspendLayout()
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Button2
@@ -107,6 +114,7 @@ Partial Class Form1
         '
         'TabPage1
         '
+        Me.TabPage1.Controls.Add(Me.CheckBox4)
         Me.TabPage1.Controls.Add(Me.CheckBox3)
         Me.TabPage1.Controls.Add(Me.Button14)
         Me.TabPage1.Controls.Add(Me.Button9)
@@ -130,6 +138,17 @@ Partial Class Form1
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "TabPage1"
         Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'CheckBox4
+        '
+        Me.CheckBox4.AutoSize = True
+        Me.CheckBox4.Location = New System.Drawing.Point(208, 148)
+        Me.CheckBox4.Name = "CheckBox4"
+        Me.CheckBox4.Size = New System.Drawing.Size(135, 17)
+        Me.CheckBox4.TabIndex = 17
+        Me.CheckBox4.Text = "Sort them in Categories"
+        Me.CheckBox4.UseVisualStyleBackColor = True
+        Me.CheckBox4.Visible = False
         '
         'CheckBox3
         '
@@ -357,7 +376,7 @@ Partial Class Form1
         '
         'MaskedTextBox1
         '
-        Me.MaskedTextBox1.Location = New System.Drawing.Point(763, 34)
+        Me.MaskedTextBox1.Location = New System.Drawing.Point(1353, 32)
         Me.MaskedTextBox1.Mask = "00:00"
         Me.MaskedTextBox1.Name = "MaskedTextBox1"
         Me.MaskedTextBox1.Size = New System.Drawing.Size(36, 20)
@@ -365,7 +384,7 @@ Partial Class Form1
         '
         'TextBox4
         '
-        Me.TextBox4.Location = New System.Drawing.Point(763, 60)
+        Me.TextBox4.Location = New System.Drawing.Point(1101, 66)
         Me.TextBox4.Multiline = True
         Me.TextBox4.Name = "TextBox4"
         Me.TextBox4.Size = New System.Drawing.Size(288, 243)
@@ -373,7 +392,7 @@ Partial Class Form1
         '
         'Button15
         '
-        Me.Button15.Location = New System.Drawing.Point(763, 338)
+        Me.Button15.Location = New System.Drawing.Point(1095, 343)
         Me.Button15.Name = "Button15"
         Me.Button15.Size = New System.Drawing.Size(75, 23)
         Me.Button15.TabIndex = 18
@@ -382,7 +401,7 @@ Partial Class Form1
         '
         'Button16
         '
-        Me.Button16.Location = New System.Drawing.Point(976, 31)
+        Me.Button16.Location = New System.Drawing.Point(1314, 3)
         Me.Button16.Name = "Button16"
         Me.Button16.Size = New System.Drawing.Size(75, 23)
         Me.Button16.TabIndex = 19
@@ -391,7 +410,7 @@ Partial Class Form1
         '
         'Button17
         '
-        Me.Button17.Location = New System.Drawing.Point(976, 320)
+        Me.Button17.Location = New System.Drawing.Point(1176, 343)
         Me.Button17.Name = "Button17"
         Me.Button17.Size = New System.Drawing.Size(75, 23)
         Me.Button17.TabIndex = 20
@@ -400,11 +419,11 @@ Partial Class Form1
         '
         'Button18
         '
-        Me.Button18.Location = New System.Drawing.Point(834, 12)
+        Me.Button18.Location = New System.Drawing.Point(763, 31)
         Me.Button18.Name = "Button18"
         Me.Button18.Size = New System.Drawing.Size(75, 23)
         Me.Button18.TabIndex = 21
-        Me.Button18.Text = "Reset"
+        Me.Button18.Text = "Search"
         Me.Button18.UseVisualStyleBackColor = True
         '
         'Timer1
@@ -413,18 +432,63 @@ Partial Class Form1
         '
         'Button19
         '
-        Me.Button19.Location = New System.Drawing.Point(763, 309)
+        Me.Button19.Location = New System.Drawing.Point(1257, 343)
         Me.Button19.Name = "Button19"
         Me.Button19.Size = New System.Drawing.Size(75, 23)
         Me.Button19.TabIndex = 22
         Me.Button19.Text = "Button19"
         Me.Button19.UseVisualStyleBackColor = True
         '
+        'DataGridView1
+        '
+        Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridView1.Location = New System.Drawing.Point(1101, 367)
+        Me.DataGridView1.Name = "DataGridView1"
+        Me.DataGridView1.Size = New System.Drawing.Size(288, 268)
+        Me.DataGridView1.TabIndex = 23
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(1098, 312)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(354, 13)
+        Me.Label2.TabIndex = 24
+        Me.Label2.Text = "D:\VB Projects\Downloads\bin\Debug\File1000LinesEach\20240102.txt"
+        '
+        'TreeView2
+        '
+        Me.TreeView2.Location = New System.Drawing.Point(763, 60)
+        Me.TreeView2.Name = "TreeView2"
+        Me.TreeView2.Size = New System.Drawing.Size(332, 575)
+        Me.TreeView2.TabIndex = 25
+        '
+        'TextBox5
+        '
+        Me.TextBox5.Location = New System.Drawing.Point(844, 33)
+        Me.TextBox5.Name = "TextBox5"
+        Me.TextBox5.Size = New System.Drawing.Size(251, 20)
+        Me.TextBox5.TabIndex = 26
+        '
+        'Button20
+        '
+        Me.Button20.Location = New System.Drawing.Point(549, 3)
+        Me.Button20.Name = "Button20"
+        Me.Button20.Size = New System.Drawing.Size(139, 23)
+        Me.Button20.TabIndex = 27
+        Me.Button20.Text = "المنقب القرآني"
+        Me.Button20.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1063, 647)
+        Me.ClientSize = New System.Drawing.Size(1401, 647)
+        Me.Controls.Add(Me.Button20)
+        Me.Controls.Add(Me.TextBox5)
+        Me.Controls.Add(Me.TreeView2)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.Button19)
         Me.Controls.Add(Me.Button18)
         Me.Controls.Add(Me.Button17)
@@ -441,6 +505,7 @@ Partial Class Form1
         Me.TabPage2.ResumeLayout(False)
         Me.TabPage2.PerformLayout()
         Me.TabPage3.ResumeLayout(False)
+        CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -482,4 +547,10 @@ Partial Class Form1
     Friend WithEvents Timer1 As Timer
     Friend WithEvents CheckBox3 As CheckBox
     Friend WithEvents Button19 As Button
+    Friend WithEvents CheckBox4 As CheckBox
+    Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label2 As Label
+    Friend WithEvents TreeView2 As TreeView
+    Friend WithEvents TextBox5 As TextBox
+    Friend WithEvents Button20 As Button
 End Class
